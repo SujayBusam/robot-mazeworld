@@ -74,13 +74,11 @@ public class MultiRobotProblem extends InformedSearchProblem {
 		public ArrayList<SearchNode> getSuccessors() {
 
 			ArrayList<SearchNode> successors = new ArrayList<SearchNode>();
-			
-			ArrayList<int[][]> potentialSuccessorsList = new ArrayList<int[][]>();
-			
+						
 			// Run through every bot, starting with the one to move
 			for (int i = turn; i < numBots; i = (i+1) % numBots) {
 				
-				// Run through all possible actions for that bot
+				// Run through all possible actions for current bot
 				for (int[] action: actions) {
 					int xNew = state[i][0] + action[0];
 					int yNew = state[i][1] + action[1]; 
