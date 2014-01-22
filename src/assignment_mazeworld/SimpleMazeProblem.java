@@ -29,6 +29,10 @@ public class SimpleMazeProblem extends InformedSearchProblem {
 	// node class used by searches.  Searches themselves are implemented
 	//  in SearchProblem.
 	public class SimpleMazeNode implements SearchNode {
+		
+		// Added by Sujay Busam
+		// Keep track of parent for backchaining
+		private SearchNode parent;
 
 		// location of the agent in the maze
 		protected int[] state; 
@@ -123,7 +127,16 @@ public class SimpleMazeProblem extends InformedSearchProblem {
 		public double priority() {
 			return heuristic() + getCost();
 		}
-
+		
+		// Written by Sujay Busam
+		// Get and set the parent node for backchaining
+		public SearchNode getParent() {
+			return this.parent;
+		}
+		
+		public void setParent(SearchNode parent) {
+			this.parent = parent;
+		}
 	}
 
 }

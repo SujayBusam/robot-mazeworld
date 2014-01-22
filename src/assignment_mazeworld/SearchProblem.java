@@ -32,6 +32,10 @@ public abstract class SearchProblem {
 		//  heuristic is ignored for uninformed searches
 		public double heuristic();
 		public double priority();
+		
+		// Added by Sujay Busam
+		public void setParent(SearchNode parent);
+		public SearchNode getParent();
 	}
 
 	// breadthFirstSearch: return a list of connecting Nodes, or null

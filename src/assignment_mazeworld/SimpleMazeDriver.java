@@ -58,12 +58,12 @@ public class SimpleMazeDriver extends Application {
 		animationPathList.add(new AnimationPath(mazeView, dfsPath));
 		System.out.println("BFS:  ");
 		mazeProblem.printStats();
-/*
+
 		List<SearchNode> astarPath = mazeProblem.astarSearch();
 		animationPathList.add(new AnimationPath(mazeView, astarPath));
 		System.out.println("A*:  ");
 		mazeProblem.printStats();
-*/
+
 	}
 
 
