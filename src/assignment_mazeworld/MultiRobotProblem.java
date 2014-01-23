@@ -93,7 +93,7 @@ public class MultiRobotProblem extends InformedSearchProblem {
 		private boolean isOccupied(int x, int y) {
 
 			// Run through x,y of all bots (excluding current one) to check for collisions
-			for (int i = (turn + 1); i < (turn % numBots); i = ((i + 1) % numBots)) {
+			for (int i = (turn + 1) % numBots; i != (turn % numBots); i = ((i + 1) % numBots)) {
 
 				// Check if this bot's position matches with the checked bot's position
 				int currentBotX = currentState[i][0];

@@ -29,7 +29,7 @@ public class MultiRobotDriver extends Application {
 	// some basic initialization of the graphics; needs to be done before 
 	//  runSearches, so that the mazeView is available
 	private void initMazeView() {
-		maze = Maze.readFromFile("corridor.maz");
+		maze = Maze.readFromFile("blank.maz");
 
 		animationPathList = new ArrayList<AnimationPath>();
 		// build the board
