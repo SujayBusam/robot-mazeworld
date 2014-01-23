@@ -29,7 +29,7 @@ public class MultiRobotDriver extends Application {
 	// some basic initialization of the graphics; needs to be done before 
 	//  runSearches, so that the mazeView is available
 	private void initMazeView() {
-		maze = Maze.readFromFile("seven.maz");
+		maze = Maze.readFromFile("corridor.maz");
 
 		animationPathList = new ArrayList<AnimationPath>();
 		// build the board
@@ -64,23 +64,25 @@ public class MultiRobotDriver extends Application {
 		//		System.out.println("A*:  ");
 		//		mazeProblem.printStats();
 
-		int[][] start = new int[2][2];
-		start[0][0] = 0;
-		start[0][1] = 0;
-		start[1][0] = 0;
-		start[1][1] = 4;
 
-		int[][] goal = new int[2][2];
-		goal[0][0] = 6;
-		goal[0][1] = 0;
-		goal[1][0] = 6;
-		goal[1][1] = 2;
+		
+		int[][] start = new int[][] {
+				{0,3},
+				{1,3},
+				{2,3}
+		};
+
+
+		int[][] goal = new int[][] {
+				{6,3},
+				{5,3},
+				{4,3}
+		};
 		
 
 
 		MultiRobotProblem mazeProblem = new MultiRobotProblem(maze, start, goal);
 		List<SearchNode> astarPath = mazeProblem.astarSearch();
-		System.out.println(astarPath);
 		animationPathList.add(new AnimationPath(mazeView, astarPath));
 		System.out.println("A*:  ");
 		mazeProblem.printStats();
@@ -152,6 +154,7 @@ public class MultiRobotDriver extends Application {
 		public AnimationPath(MazeView mazeView, List<SearchNode> path) {
 			searchPath = path;
 			MultiRobotNode firstNode = (MultiRobotNode) searchPath.get(0);
+			System.out.println("Got first node");
 
 
 			// State of first node
@@ -181,6 +184,8 @@ public class MultiRobotDriver extends Application {
 			//  using a callback triggered when the current animation
 			//  is complete
 			if (currentMove < searchPath.size() && animationDone) {
+				System.out.println("Move #" + currentMove);
+				
 				MultiRobotNode mazeNode = (MultiRobotNode) searchPath
 						.get(currentMove);
 

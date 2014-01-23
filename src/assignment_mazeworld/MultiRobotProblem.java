@@ -60,21 +60,27 @@ public class MultiRobotProblem extends InformedSearchProblem {
 				int xNew = currentState[turn][0] + action[0];
 				int yNew = currentState[turn][1] + action[1]; 
 
-				System.out.println("testing successor " + xNew + " " + yNew);
+				//System.out.println("testing successor " + xNew + " " + yNew);
 
 				if(maze.isLegal(xNew, yNew) && !isOccupied(xNew, yNew)) {
-					System.out.println("legal successor found " + " " + xNew + " " + yNew);
+					//System.out.println("legal successor found " + " " + xNew + " " + yNew);
 
 					// Make a copy of the current state
 					int[][] newState = copyState(this.currentState);
 
-					// Modify current state appropriately
+					// Modify new state appropriately
 					newState[turn][0] = xNew;
 					newState[turn][1] = yNew;
-
+					
+					// If bot hasn't moved, it has not incurred a cost
+					double newCost = getCost() + 1.0;
+//					if (newState[turn][0] == currentState[turn][0] && newState[turn][1] == currentState[turn][1]) {
+//						newCost = getCost();
+//					}
+			
 					// Create successor node with this new state
 					MultiRobotNode successor = new MultiRobotNode(newState,
-							getCost() + 1.0, (turn + 1) % numBots);
+							newCost, (turn + 1) % numBots);
 
 					// Add successor to list
 					successorsList.add(successor);
@@ -149,25 +155,25 @@ public class MultiRobotProblem extends InformedSearchProblem {
 			return (Arrays.deepEquals(this.currentState, ((MultiRobotNode) other).currentState));
 		}
 
-		@Override
-		public int hashCode() {
-			int hashCode = 0;
-
-			// Upper bound integer
-			int upperBound = Math.min(maze.width, maze.height);
-			
-			int exponent = 2 * numBots - 1;
-
-			for (int i = 0; i < numBots; i++) {
-
-				hashCode = (int) (hashCode + (this.currentState[i][0] * Math.pow(upperBound, exponent)));
-				exponent--;
-				hashCode = (int) (hashCode + (this.currentState[i][1] * Math.pow(upperBound, exponent)));
-				exponent--;
-			}
-			
-			return hashCode;
-		}
+				@Override
+				public int hashCode() {
+					int hashCode = 0;
+		
+					// Upper bound integer
+					int upperBound = Math.min(maze.width, maze.height);
+					
+					int exponent = 2 * numBots - 1;
+		
+					for (int i = 0; i < numBots; i++) {
+		
+						hashCode = (int) (hashCode + (this.currentState[i][0] * Math.pow(upperBound, exponent) + (Math.pow(this.turn, upperBound))));
+						exponent--;
+						hashCode = (int) (hashCode + (this.currentState[i][1] * Math.pow(upperBound, exponent) + (Math.pow(this.turn, upperBound))));
+						exponent--;
+					}
+					
+					return hashCode;
+				}
 
 		//		@Override
 		//		public String toString() {
@@ -188,36 +194,46 @@ public class MultiRobotProblem extends InformedSearchProblem {
 
 		@Override
 		public double heuristic() {
-			// Manhattan distance taking into account all robots
+//			// Manhattan distance taking into account all robots
+//
+//			// Get sum of all x values of robots in current state
+//			double totalCurrentX = 0;
+//			for (int i = 0; i < numBots; i++) {
+//				totalCurrentX += this.currentState[i][0];
+//			}
+//
+//			// Get sum of all y values of robots in current state
+//			double totalCurrentY = 0;
+//			for (int i = 0; i < numBots; i++) {
+//				totalCurrentY += this.currentState[i][1];
+//			}
+//
+//			// Get sum of all x values of robots in goal state
+//			double totalGoalX = 0;
+//			for (int i = 0; i < numBots; i++) {
+//				totalGoalX += goalState[i][0];
+//			}
+//
+//			// Get sum of all y values of robots in goal state
+//			double totalGoalY = 0;
+//			for (int i = 0; i < numBots; i++) {
+//				totalGoalY += goalState[i][1];
+//			}
+//
+//			// Get the difference and return
+//			double dx = totalGoalX - totalCurrentX;
+//			double dy = totalGoalY - totalCurrentY;
+//			return Math.abs(dx) + Math.abs(dy);
 
-			// Get sum of all x values of robots in current state
-			double totalCurrentX = 0;
+			// Straight line distance heuristic
+			double heuristic = 0;
+			
 			for (int i = 0; i < numBots; i++) {
-				totalCurrentX += this.currentState[i][0];
+				heuristic += (Math.sqrt(Math.pow((goalState[i][0] - currentState[i][0]), 
+						2.0) + Math.pow((goalState[i][1] - currentState[i][1]), 2.0)));
 			}
-
-			// Get sum of all y values of robots in current state
-			double totalCurrentY = 0;
-			for (int i = 0; i < numBots; i++) {
-				totalCurrentY += this.currentState[i][1];
-			}
-
-			// Get sum of all x values of robots in goal state
-			double totalGoalX = 0;
-			for (int i = 0; i < numBots; i++) {
-				totalGoalX += goalState[i][0];
-			}
-
-			// Get sum of all y values of robots in goal state
-			double totalGoalY = 0;
-			for (int i = 0; i < numBots; i++) {
-				totalGoalY += goalState[i][1];
-			}
-
-			// Get the difference and return
-			double dx = totalGoalX - totalCurrentX;
-			double dy = totalGoalY - totalCurrentY;
-			return Math.abs(dx) + Math.abs(dy);
+			
+			return heuristic;
 		}
 
 		@Override
