@@ -67,10 +67,10 @@ public class SimpleMazeProblem extends InformedSearchProblem {
 				int xNew = state[0] + action[0];
 				int yNew = state[1] + action[1]; 
 				
-				//System.out.println("testing successor " + xNew + " " + yNew);
+				System.out.println("testing successor " + xNew + " " + yNew);
 				
 				if(maze.isLegal(xNew, yNew)) {
-					//System.out.println("legal successor found " + " " + xNew + " " + yNew);
+					System.out.println("legal successor found " + " " + xNew + " " + yNew);
 					SearchNode succ = new SimpleMazeNode(xNew, yNew, getCost() + 1.0);
 					successors.add(succ);
 				}

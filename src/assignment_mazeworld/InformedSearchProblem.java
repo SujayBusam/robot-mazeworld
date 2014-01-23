@@ -50,7 +50,7 @@ public class InformedSearchProblem extends SearchProblem {
 				// For each successor
 				for (SearchNode successor: currentNode.getSuccessors()) {
 
-					// If successor not explored, add to fringe and visited
+					// If successor not explored, add to fringe
 					if (!visited.containsKey(successor)) {
 						successor.setParent(currentNode); // Set parent
 						fringe.add(successor);

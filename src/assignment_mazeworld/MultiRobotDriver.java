@@ -2,7 +2,6 @@ package assignment_mazeworld;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.animation.TranslateTransition;
@@ -14,6 +13,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import assignment_mazeworld.MultiRobotProblem.MultiRobotNode;
 import assignment_mazeworld.SearchProblem.SearchNode;
 import assignment_mazeworld.SimpleMazeProblem.SimpleMazeNode;
 
@@ -29,7 +29,7 @@ public class MultiRobotDriver extends Application {
 	// some basic initialization of the graphics; needs to be done before 
 	//  runSearches, so that the mazeView is available
 	private void initMazeView() {
-		maze = Maze.readFromFile("simple.maz");
+		maze = Maze.readFromFile("seven.maz");
 
 		animationPathList = new ArrayList<AnimationPath>();
 		// build the board
@@ -64,20 +64,23 @@ public class MultiRobotDriver extends Application {
 		//		System.out.println("A*:  ");
 		//		mazeProblem.printStats();
 
-		int[][] start = new int[][] {
-				{0, 0},
-				{1, 7},
-				{5, 6},
-		};
+		int[][] start = new int[2][2];
+		start[0][0] = 0;
+		start[0][1] = 0;
+		start[1][0] = 0;
+		start[1][1] = 4;
 
-		int[][] goal = new int[][] {
-				{7, 2},
-				{7, 3},
-				{7, 1},
-		};
+		int[][] goal = new int[2][2];
+		goal[0][0] = 6;
+		goal[0][1] = 0;
+		goal[1][0] = 6;
+		goal[1][1] = 2;
+		
+
 
 		MultiRobotProblem mazeProblem = new MultiRobotProblem(maze, start, goal);
 		List<SearchNode> astarPath = mazeProblem.astarSearch();
+		System.out.println(astarPath);
 		animationPathList.add(new AnimationPath(mazeView, astarPath));
 		System.out.println("A*:  ");
 		mazeProblem.printStats();
@@ -136,21 +139,38 @@ public class MultiRobotDriver extends Application {
 	// the underlying search path, the "piece" object used for animation,
 	// etc.
 	private class AnimationPath {
-		private Node piece;
+		private Node[] pieceArray;
+
 		private List<SearchNode> searchPath;
 		private int currentMove = 0;
 
-		private int lastX;
-		private int lastY;
+		private int[] lastXArray;
+		private int[] lastYArray;
 
 		boolean animationDone = true;
 
 		public AnimationPath(MazeView mazeView, List<SearchNode> path) {
 			searchPath = path;
-			SimpleMazeNode firstNode = (SimpleMazeNode) searchPath.get(0);
-			piece = mazeView.addPiece(firstNode.getX(), firstNode.getY());
-			lastX = firstNode.getX();
-			lastY = firstNode.getY();
+			MultiRobotNode firstNode = (MultiRobotNode) searchPath.get(0);
+
+
+			// State of first node
+			int[][] startState = firstNode.getState();
+
+			// Piece array
+			pieceArray = new Node[startState.length];
+			lastXArray = new int[startState.length];
+			lastYArray = new int[startState.length];
+
+			for (int i = 0; i < startState.length; i++) {
+				pieceArray[i] = mazeView.addPiece(startState[i][0], startState[i][1]);
+				lastXArray[i] = startState[i][0];
+				lastYArray[i] = startState[i][1];
+			}
+			//			piece = mazeView.addPiece(firstNode.getX(), firstNode.getY());
+			//			
+			//			lastX = firstNode.getX();
+			//			lastY = firstNode.getY();
 		}
 
 		// try to do the next step of the animation. Do nothing if
@@ -161,14 +181,20 @@ public class MultiRobotDriver extends Application {
 			//  using a callback triggered when the current animation
 			//  is complete
 			if (currentMove < searchPath.size() && animationDone) {
-				SimpleMazeNode mazeNode = (SimpleMazeNode) searchPath
+				MultiRobotNode mazeNode = (MultiRobotNode) searchPath
 						.get(currentMove);
-				int dx = mazeNode.getX() - lastX;
-				int dy = mazeNode.getY() - lastY;
+
+				int[][] startState = mazeNode.getState();
+
+				for (int i = 0; i < startState.length; i++) {
+					int dx = startState[i][0] - lastXArray[i];
+					int dy = startState[i][1] - lastYArray[i];
+					animateMove(pieceArray[i], dx, dy);
+					lastXArray[i] = startState[i][0];
+					lastYArray[i] = startState[i][1];
+				}
 				// System.out.println("animating " + dx + " " + dy);
-				animateMove(piece, dx, dy);
-				lastX = mazeNode.getX();
-				lastY = mazeNode.getY();
+
 
 				currentMove++;
 			}

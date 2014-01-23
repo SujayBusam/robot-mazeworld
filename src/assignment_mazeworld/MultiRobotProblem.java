@@ -8,7 +8,7 @@ import assignment_mazeworld.SimpleMazeProblem.SimpleMazeNode;
 public class MultiRobotProblem extends InformedSearchProblem {
 
 	// Five possible actions (modified Maze.java)
-	private static int actions[][] = {Maze.NORTH, Maze.EAST, Maze.SOUTH, Maze.WEST, Maze.PASS};
+	private static int actions[][] = {Maze.PASS, Maze.NORTH, Maze.EAST, Maze.SOUTH, Maze.WEST};
 
 	private int numBots;
 
@@ -43,9 +43,10 @@ public class MultiRobotProblem extends InformedSearchProblem {
 		// Constructor
 		public MultiRobotNode(int[][] start, double c, int t) {
 			cost = c;
+			turn = t;
 
 			// Initialize state
-			this.currentState = start;
+			currentState = start;
 		}
 
 		// Get the valid successors of the current node
@@ -59,10 +60,10 @@ public class MultiRobotProblem extends InformedSearchProblem {
 				int xNew = currentState[turn][0] + action[0];
 				int yNew = currentState[turn][1] + action[1]; 
 
-				//System.out.println("testing successor " + xNew + " " + yNew);
+				System.out.println("testing successor " + xNew + " " + yNew);
 
 				if(maze.isLegal(xNew, yNew) && !isOccupied(xNew, yNew)) {
-					//System.out.println("legal successor found " + " " + xNew + " " + yNew);
+					System.out.println("legal successor found " + " " + xNew + " " + yNew);
 
 					// Make a copy of the current state
 					int[][] newState = copyState(this.currentState);
@@ -86,7 +87,7 @@ public class MultiRobotProblem extends InformedSearchProblem {
 		private boolean isOccupied(int x, int y) {
 
 			// Run through x,y of all bots (excluding current one) to check for collisions
-			for (int i = (turn + 1); i < (turn % numBots); i = (i + 1) % numBots) {
+			for (int i = (turn + 1); i < (turn % numBots); i = ((i + 1) % numBots)) {
 
 				// Check if this bot's position matches with the checked bot's position
 				int currentBotX = currentState[i][0];
@@ -107,7 +108,7 @@ public class MultiRobotProblem extends InformedSearchProblem {
 			int[][] newState = new int[numBots][2];
 
 			for (int i = 0; i < oldState.length; i++) {
-				for (int j = 0; j < oldState[j].length; j++) {
+				for (int j = 0; j < 2; j++) {
 					newState[i][j] = oldState[i][j];
 				}
 			}
@@ -127,7 +128,7 @@ public class MultiRobotProblem extends InformedSearchProblem {
 
 		@Override
 		public boolean goalTest() {
-			return this.currentState.equals(goalState);
+			return (Arrays.deepEquals(currentState, goalState));
 		}
 
 
@@ -135,21 +136,38 @@ public class MultiRobotProblem extends InformedSearchProblem {
 		// can check for containment of states
 		@Override
 		public boolean equals(Object other) {
+			//
+			//			for (int i = 0; i < numBots; i++) {
+			//				if (!Arrays.equals(this.currentState[i], ((MultiRobotNode) other).currentState[i])) {
+			//					return false;
+			//				}
+			//			}
+			//
+			//			// Dropped out of loop. All arrays are equal
+			//			return true;
 
-			for (int i = 0; i < numBots; i++) {
-				if (!Arrays.equals(this.currentState[i], ((MultiRobotNode) other).currentState[i])) {
-					return false;
-				}
-			}
-
-			// Dropped out of loop. All arrays are equal
-			return true;
+			return (Arrays.deepEquals(this.currentState, ((MultiRobotNode) other).currentState));
 		}
 
-//		@Override
-//		public int hashCode() {
-//			return state[0] * 100 + state[1]; 
-//		}
+		@Override
+		public int hashCode() {
+			int hashCode = 0;
+
+			// Upper bound integer
+			int upperBound = Math.min(maze.width, maze.height);
+			
+			int exponent = 2 * numBots - 1;
+
+			for (int i = 0; i < numBots; i++) {
+
+				hashCode = (int) (hashCode + (this.currentState[i][0] * Math.pow(upperBound, exponent)));
+				exponent--;
+				hashCode = (int) (hashCode + (this.currentState[i][1] * Math.pow(upperBound, exponent)));
+				exponent--;
+			}
+			
+			return hashCode;
+		}
 
 		//		@Override
 		//		public String toString() {
@@ -160,6 +178,11 @@ public class MultiRobotProblem extends InformedSearchProblem {
 		@Override
 		public double getCost() {
 			return cost;
+		}
+
+		// Return the state
+		public int[][] getState() {
+			return this.currentState;
 		}
 
 
@@ -190,7 +213,7 @@ public class MultiRobotProblem extends InformedSearchProblem {
 			for (int i = 0; i < numBots; i++) {
 				totalGoalY += goalState[i][1];
 			}
-			
+
 			// Get the difference and return
 			double dx = totalGoalX - totalCurrentX;
 			double dy = totalGoalY - totalCurrentY;
