@@ -30,11 +30,14 @@ public class InformedSearchProblem extends SearchProblem {
 			updateMemory(fringe.size() + visited.size());
 
 
-			// Pop node from queue and continue, but only if its priority is lower than what this node's priority is if it was visited before
-			// or if it hasn't been visited at all before
+			// Pop node from queue and continue, but only if its priority is lower than what 
+			// this node's priority is if it was visited before or if it hasn't been 
+			// visited at all before
 			currentNode = fringe.peek();
 			
-			if ((visited.containsKey(currentNode) && currentNode.priority() < visited.get(currentNode)) || !visited.containsKey(currentNode)) {
+			if ((visited.containsKey(currentNode) && currentNode.priority() < 
+					visited.get(currentNode)) || !visited.containsKey(currentNode)) {
+				
 				currentNode = fringe.poll();
 
 				// Test if goal found
@@ -57,7 +60,9 @@ public class InformedSearchProblem extends SearchProblem {
 					}
 
 					// If node was visited but now has less expensive path cost, add node
-					else if (visited.containsKey(successor) && successor.priority() < visited.get(successor)) {
+					else if (visited.containsKey(successor) && successor.priority() < 
+							visited.get(successor)) {
+						
 						successor.setParent(currentNode); // Set parent
 						fringe.add(successor);
 					}
@@ -79,7 +84,8 @@ public class InformedSearchProblem extends SearchProblem {
 	public List<SearchNode> astarBackchain(SearchNode node) {
 		SearchNode currentNode = node;
 		List<SearchNode> path = new LinkedList<SearchNode>();
-
+		
+		// While the current node isn't null, add it to the list and get its parent
 		while (currentNode != null) {
 			((LinkedList<SearchNode>) path).addFirst(currentNode);
 			currentNode = currentNode.getParent();

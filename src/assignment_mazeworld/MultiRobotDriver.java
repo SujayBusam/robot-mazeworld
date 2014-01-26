@@ -22,14 +22,14 @@ public class MultiRobotDriver extends Application {
 	Maze maze;
 
 	// instance variables used for graphical display
-	private static final int PIXELS_PER_SQUARE = 32;
+	private static final int PIXELS_PER_SQUARE = 30;
 	MazeView mazeView;
 	List<AnimationPath> animationPathList;
 
 	// some basic initialization of the graphics; needs to be done before 
 	//  runSearches, so that the mazeView is available
 	private void initMazeView() {
-		maze = Maze.readFromFile("blank.maz");
+		maze = Maze.readFromFile("corridor2.maz");
 
 		animationPathList = new ArrayList<AnimationPath>();
 		// build the board
@@ -63,20 +63,20 @@ public class MultiRobotDriver extends Application {
 		//		animationPathList.add(new AnimationPath(mazeView, astarPath));
 		//		System.out.println("A*:  ");
 		//		mazeProblem.printStats();
-
+		
 
 		
 		int[][] start = new int[][] {
-				{0,3},
-				{1,3},
-				{2,3}
+				{0,0},
+				{0,1},
+				{0,2}
 		};
 
 
 		int[][] goal = new int[][] {
-				{6,3},
-				{5,3},
-				{4,3}
+				{7,4},
+				{6,4},
+				{5,4}
 		};
 		
 
